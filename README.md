@@ -8,7 +8,7 @@ a start and a goal location.
 
 ## 1. How to Run the Code
 
-This project was developed and tested using **Spyder (Python IDE)**.
+This project was developed and tested using Spyder IDE version 6.0.3 (standalone) with Python 3.11.10 on Windows 10.
 
 ### Running in Spyder (Recommended)
 
