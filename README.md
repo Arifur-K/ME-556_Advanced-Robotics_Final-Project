@@ -18,7 +18,7 @@ The pipeline has two main stages:
      - pixels with intensity > threshold → free space (white)
    - Build a 2D NumPy occupancy grid where `1 = obstacle` and `0 = free`.
 
-2. **RRT-Star motion planning**
+2. **RRT\* motion planning**
    - Plan directly in pixel coordinates on the occupancy grid.
    - Nodes store `(x, y)` position, cumulative cost, and parent index.
    - The algorithm performs:
