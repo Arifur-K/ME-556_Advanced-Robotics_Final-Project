@@ -11,8 +11,7 @@ a start and a goal location.
 The pipeline has two main stages:
 
 1. **Vision-based mapping**
-   - Load an input map image.
-   - Convert to grayscale using OpenCV.
+   - Load the input map image in grayscale using OpenCV
    - Apply a global threshold to obtain a binary image:
      - pixels with intensity ≤ threshold → obstacles (black)
      - pixels with intensity > threshold → free space (white)
