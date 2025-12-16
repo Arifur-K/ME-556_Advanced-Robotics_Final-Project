@@ -19,7 +19,7 @@ This project was developed and tested using Spyder (Python IDE).
   - Default map used in the code is map_example1.png
   - To run map_example2.png, edit "image_path = "map_example1.png" in the code accordingly
   
-## 1. Project Overview
+## 2. Project Overview
 
 The pipeline has two main stages:
 
@@ -47,7 +47,7 @@ The visualization flips the grid vertically so the plot uses a conventional
 Cartesian orientation (x to the right, y upward) while the internal indexing
 still uses image coordinates (row 0 at the top).
 
-## 2. File Structure
+## 3. File Structure
 
 - Main script contains:
   - image loading and thresholding (`load_occupancy_grid`)
@@ -61,7 +61,7 @@ still uses image coordinates (row 0 at the top).
 - `map_example2.png`  
   Nested maze environment (complex geometry with narrow corridors).
 
-## 3. Dependencies
+## 4. Dependencies
 
 This project uses Python 3 and the following libraries:
 
