@@ -81,7 +81,7 @@ still uses image coordinates (row 0 at the top).
 
 ## 4. Dependencies
 
-This project uses Python 3 and the following libraries:
+This project uses Python 3.11.10 and the following libraries:
 
 - `opencv-python` (cv2) – image loading, grayscale conversion, thresholding
 - `numpy` – numerical operations and occupancy grid representation
