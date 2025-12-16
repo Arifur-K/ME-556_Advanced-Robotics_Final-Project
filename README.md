@@ -11,7 +11,7 @@ This project was developed and tested using Spyder (Python IDE).
 - Running in Spyder (Recommended)
   - Download or clone the repository.
   - Ensure the following files are in the same directory:
-  - rrt_star_vision_mapping.py
+  - Code.py
   - map_example1.png
   - map_example2.png
   - Open Spyder and import Code.py and run.
