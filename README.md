@@ -35,7 +35,7 @@ This project was developed and tested using **Spyder (Python IDE)**.
   image_path = "map_example1.png"
 - To run the second map, change this line to:
   ```python
-  image_path = "map_example1.png"
+  image_path = "map_example2.png"
   
 ## 2. Project Overview
 
