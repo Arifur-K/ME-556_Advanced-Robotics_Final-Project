@@ -36,8 +36,7 @@ still uses image coordinates (row 0 at the top).
 
 ## 2. File Structure
 
-- `Final Project_ME 556_submission.py`  
-  Main script containing:
+- Main script contains:
   - image loading and thresholding (`load_occupancy_grid`)
   - RRT* implementation (`rrt_star` and helper functions)
   - visualization (`plot_rrt_star_result`)
