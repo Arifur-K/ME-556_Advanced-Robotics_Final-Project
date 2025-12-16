@@ -10,15 +10,20 @@ a start and a goal location.
 This project was developed and tested using Spyder (Python IDE).
 - Running in Spyder (Recommended)
   - Download or clone the repository.
-  - Ensure the following files are in the same directory:
-  - Code.py
-  - map_example1.png
-  - map_example2.png
-  - Open Spyder and import Code.py and run.
-  - Successful run will result in plots of Grayscale and Binary images, and optimal RRT\* path.
-  - Default map used in the code is map_example1.png
-  - To run map_example2.png, edit "image_path = "map_example1.png" in the code accordingly
-  
+- Ensure the following files are in the **same directory**:
+  - `Code.py`
+  - `map_example1.png`
+  - `map_example2.png`
+- Open **Spyder**, open `Code.py`, and run the script.
+- A successful run will display:
+  - Grayscale and binary images
+  - The RRT* tree expansion
+  - The final optimal RRT* path
+- Default map used in the code is map_example1.png
+- To run `map_example2.png`, edit:
+  ```python
+  image_path = "map_example1.png"
+
 ## 2. Project Overview
 
 The pipeline has two main stages:
