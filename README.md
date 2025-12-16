@@ -1,7 +1,7 @@
 # Vision-Based Environment Mapping and RRT* Path Planning
 
 This repository contains the code for the ME 556 Advanced Robotics project
-**“Vision-Based Environment Mapping and RRT* Path Planning in Simulation.”**
+**“Vision-Based Environment Mapping and RRT-Star Path Planning in Simulation.”**
 The goal is to convert a 2D image of an environment into a binary occupancy
 grid and then use the RRT* algorithm to compute a collision-free path between
 a start and a goal location.
