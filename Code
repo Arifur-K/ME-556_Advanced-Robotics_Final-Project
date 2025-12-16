@@ -5,11 +5,7 @@ import math
 import random
 from dataclasses import dataclass
 
-
-# ---------------------------
 # Node definition for RRT*
-# ---------------------------
-
 @dataclass
 class Node:
     x: float
@@ -17,22 +13,9 @@ class Node:
     cost: float = 0.0
     parent: int = -1  # index of parent node in the node list
 
-
-# ---------------------------
 # Occupancy grid from image
-# ---------------------------
-
-def load_occupancy_grid(
-    image_path,
-    resize_factor=1.0,
-    threshold=127,
-    invert=False,
-    show_intermediate=False
-):
-    """
-    Load an image and convert it into an occupancy grid:
-        0 = free
-        1 = obstacle
+def load_occupancy_grid(image_path,resize_factor=1.0,threshold=127,invert=False,show_intermediate=False):
+    """Load an image and convert it into an occupancy grid: 0 = free; 1 = obstacle
 
     Args:
         image_path: path to the map image (PNG, JPG, etc.)
@@ -47,23 +30,18 @@ def load_occupancy_grid(
     img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
     if img is None:
         raise FileNotFoundError(f"Could not load image: {image_path}")
-
     if resize_factor != 1.0:
         new_w = int(img.shape[1] * resize_factor)
         new_h = int(img.shape[0] * resize_factor)
         img = cv2.resize(img, (new_w, new_h), interpolation=cv2.INTER_AREA)
-
     # Simple global thresholding
     # Binary: pixels > threshold -> 255 (white), else 0 (black)
     _, binary = cv2.threshold(img, threshold, 255, cv2.THRESH_BINARY)
-
     if invert:
         binary = 255 - binary
-
     # Define obstacle = black (0), free = white (255)
     # occupancy_grid: 1 = obstacle, 0 = free
     occupancy_grid = (binary == 0).astype(np.uint8)
-
     if show_intermediate:
         plt.figure(figsize=(10, 4))
         plt.subplot(1, 2, 1)
@@ -78,21 +56,11 @@ def load_occupancy_grid(
 
         plt.tight_layout()
         plt.show()
-
     return occupancy_grid
 
-
-# ---------------------------
 # Utility: free / collision
-# ---------------------------
-
 def is_in_free_space(occ_grid, x, y):
-    """
-    Check if (x, y) is inside the map and not an obstacle.
-
-    Note: x = column index, y = row index
-    occ_grid[y, x] ∈ {0,1}
-    """
+    #Check if (x, y) is inside the map and not an obstacle.
     h, w = occ_grid.shape
     ix = int(round(x))
     iy = int(round(y))
@@ -100,20 +68,15 @@ def is_in_free_space(occ_grid, x, y):
         return False
     return occ_grid[iy, ix] == 0  # 0 = free
 
-
 def is_collision_free(occ_grid, x1, y1, x2, y2, step_size=1.0):
-    """
-    Check if the line segment from (x1, y1) to (x2, y2) is collision-free.
-
+    """Check if the line segment from (x1, y1) to (x2, y2) is collision-free.
     We sample along the line at ~1 pixel resolution (or given step_size).
-    If any sampled point is inside an obstacle, the segment is in collision.
-    """
+    If any sampled point is inside an obstacle, the segment is in collision."""
     dx = x2 - x1
     dy = y2 - y1
     dist = math.hypot(dx, dy)
     if dist == 0:
         return is_in_free_space(occ_grid, x1, y1)
-
     steps = int(math.ceil(dist / step_size))
     for i in range(steps + 1):
         t = i / max(steps, 1)
@@ -123,24 +86,15 @@ def is_collision_free(occ_grid, x1, y1, x2, y2, step_size=1.0):
             return False
     return True
 
-
-# ---------------------------
 # RRT* core functions
-# ---------------------------
-
 def sample_free(occ_grid):
-    """
-    Sample a random free point (x, y) in the occupancy grid.
-    Uniform over image coordinates.
-    """
+    # Sample a random free point (x, y) in the occupancy grid.
     h, w = occ_grid.shape
     while True:
         x = random.uniform(0, w - 1)
         y = random.uniform(0, h - 1)
         if is_in_free_space(occ_grid, x, y):
             return x, y
-
-
 def nearest(nodes, x_rand, y_rand):
     """
     Return index of the node in 'nodes' that is closest to (x_rand, y_rand).
@@ -158,11 +112,8 @@ def nearest(nodes, x_rand, y_rand):
 
 
 def steer(x_from, y_from, x_to, y_to, step_size):
-    """
-    Return a new point that is step_size away from (x_from, y_from)
-    in the direction of (x_to, y_to), unless the distance is smaller
-    than step_size, in which case return (x_to, y_to).
-    """
+    """Return a new point that is step_size away from (x_from, y_from) in the direction of 
+    (x_to, y_to), unless the distance is smaller than step_size, in which case return (x_to, y_to)."""
     dx = x_to - x_from
     dy = y_to - y_from
     dist = math.hypot(dx, dy)
@@ -173,13 +124,8 @@ def steer(x_from, y_from, x_to, y_to, step_size):
         x_new = x_from + step_size * math.cos(theta)
         y_new = y_from + step_size * math.sin(theta)
         return x_new, y_new
-
-
 def get_near_nodes(nodes, x_new, y_new, radius):
-    """
-    Return list of indices of nodes that are within 'radius'
-    of (x_new, y_new).
-    """
+    #Return list of indices of nodes that are within 'radius' of (x_new, y_new).
     near_indices = []
     r2 = radius * radius
     for i, node in enumerate(nodes):
@@ -188,13 +134,9 @@ def get_near_nodes(nodes, x_new, y_new, radius):
         if dx * dx + dy * dy <= r2:
             near_indices.append(i)
     return near_indices
-
-
 def extract_path(nodes, goal_index):
-    """
-    Extract a path from start to goal using parent pointers.
-    Returns list of (x, y) from start to goal.
-    """
+    """ Extract a path from start to goal using parent pointers.
+    Returns list of (x, y) from start to goal."""
     path = []
     idx = goal_index
     while idx != -1:
@@ -204,23 +146,8 @@ def extract_path(nodes, goal_index):
     path.reverse()
     return path
 
-
-# ---------------------------
 # RRT* main routine
-# ---------------------------
-
-def rrt_star(
-    occ_grid,
-    start,
-    goal,
-    max_iterations=5000,
-    step_size=10.0,
-    goal_radius=10.0,
-    gamma_rrt=50.0,
-    max_neighbor_radius=30.0,
-    goal_sample_rate=0.05,
-    show_progress=False
-):
+def rrt_star(occ_grid,start,goal,max_iterations=5000,step_size=10.0,goal_radius=10.0,gamma_rrt=50.0,max_neighbor_radius=30.0,goal_sample_rate=0.05,show_progress=False):
     """
     Run RRT* on a 2D occupancy grid.
 
@@ -233,8 +160,7 @@ def rrt_star(
         goal_radius: radius around the goal that counts as "reached"
         gamma_rrt: constant used in the neighbor radius formula
         max_neighbor_radius: upper bound on neighbor radius
-        goal_sample_rate: with this probability, sample the goal directly
-                          (biases tree growth toward the goal)
+        goal_sample_rate: with this probability, sample the goal directly (biases tree growth toward the goal)
         show_progress: if True, print progress messages
 
     Returns:
@@ -244,19 +170,15 @@ def rrt_star(
     h, w = occ_grid.shape
     x_start, y_start = start
     x_goal, y_goal = goal
-
     if not is_in_free_space(occ_grid, x_start, y_start):
         raise ValueError("Start position is in an obstacle or out of bounds.")
     if not is_in_free_space(occ_grid, x_goal, y_goal):
         raise ValueError("Goal position is in an obstacle or out of bounds.")
-
     # Initialize tree
     nodes = [Node(x_start, y_start, cost=0.0, parent=-1)]
     goal_index = None
     best_goal_cost = float("inf")
-
     dim = 2  # 2D planning
-
     for it in range(1, max_iterations + 1):
         # 1. Sampling (with some goal bias)
         if random.random() < goal_sample_rate:
@@ -277,10 +199,7 @@ def rrt_star(
 
         # 5. Compute neighbor radius (theoretical RRT* radius)
         n_nodes = len(nodes) + 1  # after we hypothetically add x_new
-        radius = min(
-            max_neighbor_radius,
-            gamma_rrt * math.sqrt(math.log(n_nodes) / n_nodes)
-        )
+        radius = min(max_neighbor_radius, gamma_rrt*math.sqrt(math.log(n_nodes)/n_nodes))
 
         # 6. Find near nodes
         near_indices = get_near_nodes(nodes, x_new, y_new, radius)
@@ -318,42 +237,25 @@ def rrt_star(
         dist_to_goal = math.hypot(new_node.x - x_goal, new_node.y - y_goal)
         if dist_to_goal <= goal_radius:
             # This node is a goal candidate
-            total_cost = new_node.cost + dist_to_goal  # or just new_node.cost if you treat goal as a point
+            total_cost = new_node.cost + dist_to_goal
             if total_cost < best_goal_cost:
                 best_goal_cost = total_cost
                 goal_index = new_index
-
         if show_progress and it % 500 == 0:
             print(f"Iteration {it}/{max_iterations}, nodes: {len(nodes)}, best_goal_cost: {best_goal_cost:.2f}")
-
     return nodes, goal_index
 
-
-# ---------------------------
 # Visualization
-# ---------------------------
-
 def plot_rrt_star_result(occ_grid, nodes, goal_index, start, goal):
-    """
-    Visualize occupancy grid, RRT* tree, and final path.
-
-    Internally:
-        occ_grid[y, x], y=0 at TOP, y increases DOWN.
-    Visually:
-        x increases right, y increases UP (0 at bottom, like math coords).
-    """
+    """ Visualize occupancy grid, RRT* tree, and final path.
+    Internally: occ_grid[y, x], y=0 at TOP, y increases DOWN.
+    Visually: x increases right, y increases UP (0 at bottom, like math coords)."""
     h, w = occ_grid.shape
-
-    # Flip vertically for display so that row 0 is at the bottom
     grid_vis = np.flipud(occ_grid)
-
     plt.figure(figsize=(8, 8))
-    # Show flipped grid with origin='lower' so y increases upward
     plt.imshow(grid_vis, cmap='gray_r', origin='lower')
     plt.xlim(0, w)
     plt.ylim(0, h)
-
-    # Convert internal image y (top-down) to plot y (bottom-up)
     def y_plot(y_img):
         return h - 1 - y_img
 
@@ -361,19 +263,13 @@ def plot_rrt_star_result(occ_grid, nodes, goal_index, start, goal):
     for node in nodes:
         if node.parent != -1:
             parent = nodes[node.parent]
-            plt.plot(
-                [parent.x, node.x],
-                [y_plot(parent.y), y_plot(node.y)],
-                linewidth=0.5,
-                color="orange",
-                alpha=0.5,
-            )
+            plt.plot([parent.x, node.x],[y_plot(parent.y), y_plot(node.y)],linewidth=0.5,color="orange",alpha=0.5,)
 
     # Plot start and goal
     x_start, y_start = start
-    x_goal,  y_goal  = goal
+    x_goal, y_goal = goal
     plt.scatter([x_start], [y_plot(y_start)], c="green", s=80, label="Start")
-    plt.scatter([x_goal],  [y_plot(y_goal)],  c="red",   s=80, label="Goal")
+    plt.scatter([x_goal], [y_plot(y_goal)],  c="red", s=80, label="Goal")
 
     # Plot final path if goal was reached
     if goal_index is not None:
@@ -386,51 +282,31 @@ def plot_rrt_star_result(occ_grid, nodes, goal_index, start, goal):
         plt.plot(xs, ys, c="blue", linewidth=2.5, label="RRT* path")
 
     plt.title("RRT* on Occupancy Grid")
-    plt.legend(
-    loc='upper center',
-    bbox_to_anchor=(0.5, -0.05),
-    ncol=3,
-    frameon=False
-)
+    plt.legend(loc='upper center',bbox_to_anchor=(0.5, -0.05),ncol=3,frameon=False)
     plt.gca().set_aspect("equal", adjustable="box")
     plt.tight_layout()
     plt.show()
 
-
-# ---------------------------
-# Main: example usage
-# ---------------------------
-
+# Main: example usage 
 def main():
-    # ---- 1. Load map and build occupancy grid ----
-    # Replace this with your own map file.
-    image_path = "map_example2.png"  # <-- change to your image
-
-    occ_grid = load_occupancy_grid(
-        image_path,
-        resize_factor=1.0,     # try 0.5 if the image is large
-        threshold=250,         # adjust depending on your map
-        invert=False,          # set True if obstacles are white
-        show_intermediate=True # visualize grayscale & binary
-    )
-
+    # 1. Load map and build occupancy grid
+    # Replace this with the desired map file.
+    image_path = "map_example1.png"  # <-- change to map_example2 to see the other map
+    occ_grid = load_occupancy_grid(image_path,resize_factor=1.0,threshold=250,invert=False,show_intermediate=True)
     h, w = occ_grid.shape
     print(f"Occupancy grid size: {w} x {h}")
 
-    # ---- 2. Define start and goal in pixel coordinates ----
-    # Make sure these are in free space (not on obstacles).
-    start = (20, h-20)                 # (x_start, y_start)
+    # 2. Define start and goal in pixel coordinates
+    start = (20, h-20)           # (x_start, y_start)
     goal = (w - 20, 20)          # (x_goal, y_goal)
-
     if not is_in_free_space(occ_grid, *start):
         raise ValueError("Chosen start is not in free space. Adjust coordinates.")
     if not is_in_free_space(occ_grid, *goal):
         raise ValueError("Chosen goal is not in free space. Adjust coordinates.")
 
-    # ---- 3. Run RRT* ----
+    # 3. Run RRT*
     random.seed(42)
     np.random.seed(42)
-
     nodes, goal_index = rrt_star(
         occ_grid,
         start=start,
@@ -443,15 +319,13 @@ def main():
         goal_sample_rate=0.05,    # 5% of samples go directly at the goal
         show_progress=True
     )
-
     if goal_index is None:
         print("RRT* did not find a path to the goal within the iteration limit.")
     else:
         print("Path found! Visualizing...")
 
-    # ---- 4. Visualize result ----
+    #4. Visualize result
     plot_rrt_star_result(occ_grid, nodes, goal_index, start, goal)
-
 
 if __name__ == "__main__":
     main()
