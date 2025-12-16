@@ -23,6 +23,33 @@ This project was developed and tested using Spyder (Python IDE).
 - To run `map_example2.png`, edit:
   ```python
   image_path = "map_example1.png"
+## 1. How to Run the Code
+
+This project was developed and tested using **Spyder (Python IDE)**.
+
+### Running in Spyder (Recommended)
+
+1. Download or clone the repository.
+
+2. Ensure the following files are located in the **same directory**:
+   - `Code.py`
+   - `map_example1.png`
+   - `map_example2.png`
+
+3. Open **Spyder** and open `Code.py`.
+
+4. Run the script.
+
+5. A successful run will display:
+   - the grayscale image,
+   - the binary occupancy grid, and
+   - the RRT* tree and final optimal path.
+
+### Selecting the Map
+
+- By default, the code uses:
+  ```python
+  image_path = "map_example1.png"
 
 ## 2. Project Overview
 
