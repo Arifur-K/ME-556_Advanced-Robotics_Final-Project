@@ -6,6 +6,19 @@ The goal is to convert a 2D image of an environment into a binary occupancy
 grid and then use the RRT* algorithm to compute a collision-free path between
 a start and a goal location.
 
+## 1. How To Run The Code
+This project was developed and tested using Spyder (Python IDE).
+- Running in Spyder (Recommended)
+  - Download or clone the repository.
+  - Ensure the following files are in the same directory:
+  - rrt_star_vision_mapping.py
+  - map_example1.png
+  - map_example2.png
+  - Open Spyder and import Code.py and run.
+  - Successful run will result in plots of Grayscale and Binary images, and optimal RRT\* path.
+  - Default map used in the code is map_example1.png
+  - To run map_example2.png, edit "image_path = "map_example1.png" in the code accordingly
+  
 ## 1. Project Overview
 
 The pipeline has two main stages:
