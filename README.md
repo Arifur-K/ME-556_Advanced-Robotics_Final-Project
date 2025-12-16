@@ -50,9 +50,6 @@ still uses image coordinates (row 0 at the top).
 - `map_example2.png`  
   Nested maze environment (complex geometry with narrow corridors).
 
-You can rename the script however you like, but please keep the paths
-consistent with this README.
-
 ## 3. Dependencies
 
 This project uses Python 3 and the following libraries:
