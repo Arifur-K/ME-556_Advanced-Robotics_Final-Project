@@ -23,7 +23,7 @@ This project was developed and tested using **Spyder (Python IDE)**.
 
 4. Run the script.
 
-5. A successful run will display:
+5. A successful run will display the following:
    - the grayscale image,
    - the binary occupancy grid, and
    - the RRT* tree and final optimal path.
